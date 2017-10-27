@@ -81,48 +81,74 @@ pop %r9
 pop %r15
 
 
-
+# rdx = first number which needs to be moved
 # r9  = filesize buffer2
 # r15 = pointer buffer2
 # r10 = minimum
 # r11 = pointer sorted list
 # r12 = cmp value
-# r13 = 8
+# r13 = adress to minimum
 # r14 = counter(index)
 # r8  = pointer to cmp value
-mov $8, %r13		# used to increase pointer to next number
+#mov $8, %r13		# used to increase pointer to next number
 #mov $0, %r14		# counter(index)
 add %r15, %r9		# end of buffer
 mov %r15, %r11		# everything above r11 is sorted
 
-	loop_1:
+	sort:
 	# outer for loop
 	mov (%r11), %r10	# First number is minimum
-	mov %r11, %r8	
-	
-		sort:
+	mov %r11, %r8
+
+		minimum:
 		# inner for loop
 		add $8, %r8
 		cmp %r8, %r9
-		je out
-		
+		je endOfList
+
 		mov (%r8), %r12
 		cmp %r10, %r12
-		jl swap
-		jge sort
-		
-		swap:
-		mov %r12, %r10
-		jmp sort
-	
-	out:
-	# swap %r10 med første tal
-	add $8, %r11
+		jl newMinimum
+		jge minimum
 
-push %r10
+		  newMinimum:
+		  mov %r12, %r10
+      mov %r8, %r13
+		  jmp minimum
+
+	endOfList:
+  mov (%r11), %rdx    # could be done in one line, but then it crashes
+  mov %rdx, (%r13)    # first number goes to minimum numbers adress
+  mov %r10, (%r11)    # minimum number goes to first numbers adress
+
+#  push %r10
+#  call print_number   # prints each number as they are sorted
+#  pop %r10
+
+	add $8, %r11        # the list is sorted above r11
+
+
+  cmp %r11, %r9
+  jne sort
+
+# så skal der bruges et print loop her
+# man kunne evt. incremente r15
+
+printing_loop:
+push (%r15)
 call print_number
-pop %r10
+pop %rax
+add $8, %r15
+cmp %r15, %r9
+jne printing_loop
 
+#push 792(%r15)
+#call print_number
+#pop %rax
+
+#push (%r15)
+#call print_number
+#pop %rax
 
 
 
@@ -140,5 +166,3 @@ syscall
 mov $60, %rax
 mov $0, %rdi
 syscall
-
-
