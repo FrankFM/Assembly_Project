@@ -105,31 +105,36 @@ outer:
 endOfList:
   # The minimum of the unsorted list is found
 	# We wish to put the minimum in top of the memory (first in the list)
-  mov (%rcx), %r12    # could be done in one line, but then it crashes
-  mov %r12, (%r13)    # first number goes to minimum numbers adress
-  mov %r10, (%rcx)    # minimum number goes to first numbers adress
-	add $8, %rcx        # the list is sorted above r11
-  cmp %rcx, %r9
-  jne outer
+  mov (%rcx), %r12        # moves first number in memory to minimum numbers address
+  mov %r12, (%r13)
+  mov %r10, (%rcx)        # moves minimum number to first numbers address
+	add $8, %rcx            # we want minimum to be over rcx pointer
+  cmp %rcx, %r9           # did rcx pointer reach end of buffer?
+  jne outer               # if not, find another minimum
 
 printing_loop:
+# prints every number in buffer
 push (%r15)
 call print_number
 pop %rax
-add $8, %r15
-cmp %r15, %r9
-jne printing_loop
+add $8, %r15              # r15 points to next number
+cmp %r15, %r9             # did r15 pointer reach end of buffer?
+jne printing_loop         # if not, print another number
 
 # push %r14
-# call print_number
+# call print_number       # prints the counter
 # pop %r14
 
-# Close the file again
+###########################################################
+################### Close the file ########################
+###########################################################
 mov $3, %rax
 mov $3, %rdi
 syscall
 
-# Syscall to exit
+###########################################################
+################### syscall to exit #######################
+###########################################################
 mov $60, %rax
 mov $0, %rdi
 syscall
