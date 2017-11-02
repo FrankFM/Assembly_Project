@@ -97,18 +97,18 @@ outer:
     cmp %r10, %r12        # is cmp value less than minimum?
     jl newMinimum         # if yes jump to newMinimum
     jge inner             # if no go to next number
-		newMinimum:
+    newMinimum:
       # overwrite r10 and r13 with the new minimum value and address
-		  mov %r12, %r10      # a new minimum value is saved
+      mov %r12, %r10      # a new minimum value is saved
       mov %r8, %r13       # a new minimum address is saved
-		  jmp inner           # go to next number
+      jmp inner           # go to next number
 endOfList:
   # The minimum of the unsorted list is found
-	# We wish to put the minimum in top of the memory (first in the list)
+  # We wish to put the minimum in top of the memory (first in the list)
   mov (%rcx), %r12        # moves first number in memory to minimum numbers address
   mov %r12, (%r13)
   mov %r10, (%rcx)        # moves minimum number to first numbers address
-	add $8, %rcx            # we want minimum to be over rcx pointer
+  add $8, %rcx            # we want minimum to be over rcx pointer
   cmp %rcx, %r9           # did rcx pointer reach end of buffer?
   jne outer               # if not, find another minimum
 
